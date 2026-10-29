@@ -4,13 +4,8 @@ Configuration and styling utilities for Streamlit dashboard
 
 import streamlit as st
 
-# Database configuration
-DB_CONFIG = {
-    'host': 'localhost',
-    'user': 'root',
-    'password': 'lakshya',
-    'database': 'project'
-}
+# Database credentials are read from the project-root .env file
+# (see .env.example) by backend/src/database.py
 
 # Application metadata
 APP_NAME = "Library Management System"

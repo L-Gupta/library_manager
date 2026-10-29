@@ -26,7 +26,7 @@ Folder Structure:
 import streamlit as st
 
 # Import configuration - these should work since we're running from the frontend directory
-from utils.config import configure_page, DB_CONFIG, PAGES, APP_NAME, APP_VERSION
+from utils.config import configure_page, PAGES, APP_NAME, APP_VERSION
 from utils.database_helpers import get_database
 
 # Import page modules  
@@ -64,8 +64,6 @@ def main():
     page = st.sidebar.radio(
         "Navigation Menu",
         page_names,
-        icons=page_icons,
-        label_visibility="collapsed"
     )
     
     st.sidebar.markdown("---")

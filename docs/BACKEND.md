@@ -108,22 +108,23 @@ This creates:
 
 #### 5. Configure Database Connection
 
-Edit `backend/src/database.py`:
+Copy the example file and fill in your MySQL credentials:
 
-```python
-self.connection = mysql.connector.connect(
-    host="localhost",       # MySQL host
-    user="root",            # Your username
-    password="lakshya",     # Your password
-    database="project"      # Database name
-)
+```bash
+cp .env.example .env
 ```
 
-**Default credentials**:
-- Host: `localhost`
-- User: `root`
-- Password: `lakshya`
-- Database: `project`
+```
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=your_mysql_password
+DB_NAME=project
+```
+
+`.env` is git-ignored and is read automatically by `backend/src/database.py` (via `python-dotenv`), which both the CLI and the dashboard use. Never commit real credentials.
+
+`Database()` reads these values when constructed; explicit arguments (e.g. `Database(host=..., password=...)`) override them.
 
 ---
 
@@ -691,7 +692,7 @@ Transactions:
 ```bash
 # Verify password
 mysql -u root -p
-# Update credentials in database.py
+# Update DB_PASSWORD in .env
 ```
 
 ### "Unknown database 'project'"

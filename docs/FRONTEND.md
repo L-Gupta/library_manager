@@ -69,22 +69,21 @@ This installs:
 
 #### 2. Verify Database Connection
 
-Edit `frontend/utils/config.py` to set database credentials:
+Copy the example file and fill in your MySQL credentials:
 
-```python
-DB_CONFIG = {
-    'host': 'localhost',      # MySQL host
-    'user': 'root',           # MySQL username
-    'password': 'lakshya',    # MySQL password
-    'database': 'project'     # Database name
-}
+```bash
+cp .env.example .env
 ```
 
-**Default credentials** (if unchanged):
-- Host: `localhost`
-- User: `root`
-- Password: `lakshya`
-- Database: `project`
+```
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=your_mysql_password
+DB_NAME=project
+```
+
+`.env` is git-ignored and is read automatically by `backend/src/database.py` (via `python-dotenv`), which both the CLI and the dashboard use. Never commit real credentials.
 
 #### 3. Ensure Backend is Set Up
 
@@ -332,13 +331,8 @@ total_books = get_total_books(db)  # Returns number
 Contains all configuration:
 
 ```python
-# Database connection details
-DB_CONFIG = {
-    'host': 'localhost',
-    'user': 'root',
-    'password': 'lakshya',
-    'database': 'project'
-}
+# Database credentials live in the project-root .env file
+# (read by backend/src/database.py), not in this file
 
 # App metadata
 APP_NAME = "Library Management System"
@@ -507,7 +501,7 @@ pip install streamlit==1.28.1
 - Verify backend path is correct
 
 ### Database Connection Error
-- Check credentials in `config.py`
+- Check credentials in `.env`
 - Verify MySQL is running
 - Verify database 'project' exists
 - Check network connectivity

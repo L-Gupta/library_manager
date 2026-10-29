@@ -1,0 +1,41 @@
+# Runs the Streamlit dashboard together with a MySQL server.
+# Usage: cp .env.example .env  (fill in DB_PASSWORD), then  docker compose up --build
+#
+# Note: the MySQL container is initialised with DB_PASSWORD as its *root*
+# password, so keep DB_USER=root when using this file.
+
+services:
+  db:
+    image: mysql:8.0
+    # The app connects with the mysql_native_password auth plugin
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+      MYSQL_DATABASE: ${DB_NAME:-project}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  app:
+    build: .
+    environment:
+      # Inside the compose network the database is reachable by its service name
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: ${DB_USER:-root}
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+      DB_NAME: ${DB_NAME:-project}
+    ports:
+      - "8501:8501"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  mysql_data:

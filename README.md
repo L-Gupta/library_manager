@@ -159,22 +159,32 @@ This creates 4 tables and loads sample data.
 
 ### Step 3: Configure Database Credentials
 
-Edit `src/database.py` (lines 11-16) and update:
+Copy the example file and fill in your MySQL credentials:
 
-```python
-self.connection = mysql.connector.connect(
-    host="localhost",           # Your MySQL host
-    user="root",                # Your MySQL username
-    password="your_password",   # Your MySQL password
-    database="project"
-)
+```bash
+cp .env.example .env
 ```
 
-**Default Credentials** (if you haven't changed them):
-- **Host**: localhost
-- **User**: root
-- **Password**: lakshya
-- **Database**: project
+```
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=your_mysql_password
+DB_NAME=project
+```
+
+`.env` is git-ignored and is read automatically by `backend/src/database.py` (via `python-dotenv`), which both the CLI and the dashboard use. Never commit real credentials.
+
+### Alternative: Run with Docker
+
+Runs the dashboard and a MySQL 8.0 server together; no local MySQL install needed.
+
+```bash
+cp .env.example .env    # set DB_PASSWORD (keep DB_USER=root for Docker)
+docker compose up --build
+```
+
+The dashboard is served at `http://localhost:8501`. Tables and sample data are created automatically on first start, and MySQL data persists in the `mysql_data` volume.
 
 ### Step 4: Verify Setup (Optional)
 
@@ -688,7 +698,7 @@ pip install mysql-connector-python==8.2.0
 ### Issue: "Access denied for user 'root'@'localhost'"
 **Solution:**
 1. Check MySQL is running
-2. Verify password in `src/database.py`
+2. Verify `DB_PASSWORD` in `.env`
 3. Update credentials if changed
 4. Restart MySQL service
 
@@ -795,7 +805,7 @@ This project is created for educational and personal library management purposes
 - [ ] MySQL Server installed and running
 - [ ] Dependencies installed: `pip install -r requirements.txt`
 - [ ] Database initialized: `mysql -u root -p project < sql/schema.sql`
-- [ ] Database credentials verified in `src/database.py`
+- [ ] Database credentials set in `.env`
 - [ ] Dashboard runs: `streamlit run dashboard.py`
 - [ ] Can access: `http://localhost:8501`
 - [ ] All 5 pages load without errors
@@ -941,11 +951,12 @@ The system comes with pre-loaded sample data:
 ## 🔧 Configuration
 
 ### Environment Variables
-Create a `.env` file in the root directory (optional):
+All database settings come from a `.env` file in the root directory (see `.env.example`):
 ```
 DB_HOST=localhost
+DB_PORT=3306
 DB_USER=root
-DB_PASSWORD=lakshya
+DB_PASSWORD=your_mysql_password
 DB_NAME=project
 ```
 
@@ -959,7 +970,7 @@ SEPARATOR = "x----...-----x"  # Change visual separator
 
 ### MySQL Connection Error
 - Ensure MySQL server is running
-- Verify credentials in `database.py`
+- Verify credentials in `.env`
 - Check database name is correct
 
 ### Missing Dependencies

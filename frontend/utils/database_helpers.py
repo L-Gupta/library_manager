@@ -30,8 +30,7 @@ calculate_penalty = backend_utils.calculate_penalty
 def get_database():
     """Initialize and cache database connection"""
     try:
-        from utils.config import DB_CONFIG
-        db = Database(**DB_CONFIG)
+        db = Database()
         return db
     except Exception as e:
         st.error(f"Database connection failed: {str(e)}")

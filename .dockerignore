@@ -1,0 +1,26 @@
+# Secrets: passed in at runtime via docker compose, never baked into the image
+.env
+.env.*
+!.env.example
+
+# Version control / editors
+.git
+.gitignore
+.vscode/
+.idea/
+
+# Python artifacts
+venv/
+.venv/
+env/
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.log
+
+# Not needed in the image
+docs/
+test.py
+Dockerfile
+docker-compose.yml
+.dockerignore

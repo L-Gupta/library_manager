@@ -84,7 +84,6 @@ class LibraryManager:
     def run(self):
         """Run the library manager application"""
         print(MAIN_SEPARATOR)
-        self.db.initialize_tables()
         self.display_main_menu()
 
 

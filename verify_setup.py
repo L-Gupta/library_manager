@@ -9,6 +9,12 @@ import os
 import subprocess
 from pathlib import Path
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv(Path(__file__).resolve().parent / ".env")
+except ImportError:
+    pass  # reported by the package check below
+
 # Color codes for output
 GREEN = '\033[92m'
 RED = '\033[91m'
@@ -54,16 +60,21 @@ def check_python_package(package_name, module_name=None):
         warning(f"Run: pip install {package_name}")
         return False
 
+def get_db_params():
+    """Read MySQL connection parameters from the environment / .env"""
+    return {
+        "host": os.getenv("DB_HOST", "localhost"),
+        "port": int(os.getenv("DB_PORT", "3306")),
+        "user": os.getenv("DB_USER", "root"),
+        "password": os.getenv("DB_PASSWORD", ""),
+        "database": os.getenv("DB_NAME", "project"),
+    }
+
 def check_mysql_connection():
     """Check if MySQL is running and accessible"""
     try:
         import mysql.connector
-        conn = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password=input(f"{YELLOW}Enter MySQL root password: {RESET}"),
-            database="project"
-        )
+        conn = mysql.connector.connect(**get_db_params())
         check_mark("MySQL connection successful")
         conn.close()
         return True
@@ -75,13 +86,7 @@ def check_database_tables():
     """Check if database tables exist"""
     try:
         import mysql.connector
-        password = input(f"{YELLOW}Enter MySQL root password: {RESET}")
-        conn = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password=password,
-            database="project"
-        )
+        conn = mysql.connector.connect(**get_db_params())
         cursor = conn.cursor()
         cursor.execute("SHOW TABLES;")
         tables = cursor.fetchall()
@@ -125,6 +130,11 @@ def main():
     all_checks_passed &= check_file_exists("requirements.txt", "requirements.txt")
     all_checks_passed &= check_file_exists("README.md", "README.md")
     all_checks_passed &= check_file_exists("backend/sql/schema.sql", "backend/sql/schema.sql")
+    all_checks_passed &= check_file_exists(".env.example", ".env.example")
+    if Path(".env").exists():
+        check_mark(".env exists")
+    else:
+        warning(".env not found - copy .env.example to .env and fill in your MySQL credentials")
     
     # Check backend modules
     print(f"\n{YELLOW}Checking Backend Modules...{RESET}")
@@ -152,6 +162,7 @@ def main():
     all_checks_passed &= check_python_package("pandas")
     all_checks_passed &= check_python_package("plotly")
     all_checks_passed &= check_python_package("mysql-connector-python", "mysql.connector")
+    all_checks_passed &= check_python_package("python-dotenv", "dotenv")
     
     # Check Python version
     print(f"\n{YELLOW}Checking Python Version...{RESET}")
